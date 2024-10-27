@@ -1,6 +1,7 @@
-from src.database import BaseModel
-from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.database import BaseModel
 
 
 class AuthTokenModel(BaseModel):

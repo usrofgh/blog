@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from src.database import BaseModel
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
+
+from src.database import BaseModel
 
 
 class PostModel(BaseModel):

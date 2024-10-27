@@ -2,7 +2,6 @@ from sqladmin import ModelView
 
 from src.back.models.comments import CommentModel as Comment
 from src.back.models.posts import PostModel as Post
-
 from src.back.models.users import UserModel as User
 
 

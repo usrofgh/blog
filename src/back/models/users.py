@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from src.database import BaseModel
+from sqlalchemy import Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
-from sqlalchemy import Index
+
+from src.database import BaseModel
 
 
 class UserModel(BaseModel):
@@ -32,7 +33,7 @@ class UserModel(BaseModel):
         return self.email
 
 
+from src.back.models.comments import CommentModel  # noqa E402
 # https://ru.stackoverflow.com/questions/1593274/sqlalchemy-relationship-с-моделями-в-отдельных-файлах
 # Fixing of the error - "sqlalchemy.exc.InvalidRequestError: When initializing mapper Mapper[UserModel(users)]
 from src.back.models.posts import PostModel  # noqa E402
-from src.back.models.comments import CommentModel  # noqa E402
