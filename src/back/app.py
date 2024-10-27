@@ -13,10 +13,10 @@ from src.back.routers.auth_router import auth_router
 from src.back.routers.comment_router import comment_router
 from src.back.routers.post_router import post_router
 from src.back.routers.user_router import user_router
-from src.config import Envs, config
+from src.config import config
 from src.database import engine
 
-if config.MODE is not Envs.TEST:  # During testing process we don't need to log errors
+if config.MODE != "TEST":  # During testing process we don't need to log errors
     # Example of the error description - https://prnt.sc/Iso5oQqEkMOO
     sentry_sdk.init(
         dsn=config.SENTRY_DSN,
