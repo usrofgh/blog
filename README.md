@@ -37,7 +37,7 @@
 # <a name="docker">🐳 Docker</a>
 It uses a multi-stage build to optimize the image size
 
-.env is already in the project. It uses dev creds to run the project and test it
+Put .env to root of the project
 ```bash
 git clone https://github.com/usrofgh/blog
 cd blog
