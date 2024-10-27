@@ -15,12 +15,12 @@ from src.config import config
 from src.database import BaseModel, SessionLocal, engine
 
 
-# Use exactly this filename to allow pytest to detect this file
-# scope=session - Call once for all tests
-# scope=function - Call everytime for each test
-
 @pytest.fixture(autouse=True, scope="function")
 async def prepare_database():
+    # Use exactly this filename to allow pytest to detect this file
+    # scope=session - Call once for all tests
+    # scope=function - Call everytime for each test
+
     assert config.MODE == "TEST"
     async with engine.begin() as db:
         await db.run_sync(BaseModel.metadata.drop_all)
