@@ -62,7 +62,7 @@ async def send_activation_email(ctx: dict, to: str, activation_code: str) -> Non
         email["Subject"] = "Activation link"
         email["From"] = config.SMTP_USER
         email["To"] = to
-        link = f"http://127.0.0.1:8000/v1/api/auth/activate-account/?activation_code={activation_code}"
+        link = f"http://{config.API_HOST}:{config.API_PORT}/v1/api/auth/activate-account/?activation_code={activation_code}"
         email.set_content(
             f"""
                 <div>

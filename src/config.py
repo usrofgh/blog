@@ -31,6 +31,9 @@ class Config(BaseSettings):
     LOG_LEVEL: str
     LOG_FILE: str
 
+    API_HOST: str
+    API_PORT: int
+
     JWT_ACCESS_KEY: SecretStr
     JWT_REFRESH_KEY: SecretStr
     JWT_ACCESS_TTL_MIN: int
