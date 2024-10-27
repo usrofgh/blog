@@ -19,10 +19,10 @@ class UserForbiddenException(BException):
 
 
 class IncorrectActivationLink(BException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    detail = "Incorrect activation link"
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Incorrect activation link"
 
 
 class UnactivatedException(BException):
-    status = status.HTTP_400_BAD_REQUEST
-    detail = "Activate the account"
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Activate the account"

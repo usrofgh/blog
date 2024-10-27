@@ -14,10 +14,10 @@ class IncorrectCredsException(BException):
 
 
 class JWTIncorrectFormatException(BException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-    detail = "Incorrect JWT token format"
+    STATUS_CODE = status.HTTP_401_UNAUTHORIZED
+    DETAIL = "Incorrect JWT token format"
 
 
 class JWTokenExpiredException(BException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-    detail = "JWT token expired"
+    STATUS_CODE = status.HTTP_401_UNAUTHORIZED
+    DETAIL = "JWT token expired"

@@ -1,3 +1,4 @@
+from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -8,7 +9,11 @@ class BaseModel(DeclarativeBase):
     pass
 
 
-engine = create_async_engine(config.PSQL_URI)
+DB_PARAMS = {}
+if config.MODE == "TEST":
+    DB_PARAMS["poolclass"] = NullPool  # To use a new connection every time
+
+engine = create_async_engine(config.PSQL_URI, **DB_PARAMS)
 SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
 
 

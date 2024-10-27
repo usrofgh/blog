@@ -1,5 +1,3 @@
-import asyncio
-
 from fastapi import APIRouter, Depends, status
 from fastapi_cache.decorator import cache
 from fastapi_versioning import version
@@ -25,5 +23,4 @@ analytic_router = APIRouter(
 @version(1)
 @cache(expire=30)
 async def comments_daily_breakdown(filters: AnalyticCommentFilterSchema = Depends(), db: AS = Depends(get_db)):
-    await asyncio.sleep(5)
     return await AnalyticService.analytic_comments(db=db, filters=filters)
