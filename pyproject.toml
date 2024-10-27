@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "blog"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic-settings = "^2.6.0"
+fastapi = "^0.115.2"
+alembic = "^1.13.3"
+pydantic = {extras = ["email"], version = "^2.9.2"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
+asyncpg = "^0.29.0"
+passlib = "^1.7.4"
+pyjwt = "^2.9.0"
+uvicorn = "^0.32.0"
+bcrypt = "^4.2.0"
+openai = "^1.52.0"
+redis = "^5.1.1"
+psycopg2-binary = "^2.9.10"
+arq = "^0.26.1"
+psycopg2 = "^2.9.10"
+tenacity = "^9.0.0"
+pytest = "^8.3.3"
+fastapi-versioning = "^0.10.0"
+sentry-sdk = {extras = ["fastapi"], version = "^2.17.0"}
+sqladmin = {extras = ["full"], version = "^0.20.0"}
+python-jose = "^3.3.0"
+fastapi-cache2 = "^0.2.2"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+flake8 = "^7.1.1"
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = false
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 120

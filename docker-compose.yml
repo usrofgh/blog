@@ -1,0 +1,57 @@
+networks:
+  blog:
+    driver: bridge
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - blog
+
+  db:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: ${PSQL_PASSWORD}
+      POSTGRES_DB: ${PSQL_DB}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $PSQL_USER", "--quiet" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${PSQL_PORT}:5432"
+    networks:
+      - blog
+
+
+  worker:
+    build:
+      context: .
+    container_name: worker
+    command: arq src.back.tasks.task_manager.WorkerSettings
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - blog
+
+
+  api:
+    build:
+      context: .
+    container_name: api
+    ports:
+      - "8081:8080"
+    command: /bin/sh -c "alembic upgrade head && uvicorn src.back.app:app --host 0.0.0.0 --port 8080"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - blog
