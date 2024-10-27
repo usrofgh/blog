@@ -14,6 +14,7 @@ from src.back.models.users import UserModel
 from src.config import config
 from src.database import BaseModel, SessionLocal, engine
 
+
 # Use exactly this filename to allow pytest to detect this file
 # scope=session - Call once for all tests
 # scope=function - Call everytime for each test
