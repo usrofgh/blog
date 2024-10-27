@@ -6,15 +6,13 @@ from pathlib import Path
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.back.app import app as fastapi_app
-from src.back.models.users import UserModel
-from src.back.models.posts import PostModel
 from src.back.models.comments import CommentModel
+from src.back.models.posts import PostModel
+from src.back.models.users import UserModel
 from src.config import config
 from src.database import BaseModel, SessionLocal, engine
-
 
 # Use exactly this filename to allow pytest to detect this file
 # scope=session - Call once for all tests

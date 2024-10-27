@@ -1,5 +1,3 @@
-import asyncio
-
 from fastapi import APIRouter, Depends, status
 from fastapi_cache.decorator import cache
 from fastapi_versioning import version

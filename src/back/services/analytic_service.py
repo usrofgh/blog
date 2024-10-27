@@ -12,8 +12,8 @@ class AnalyticService:
         stmt = select(
             func.date(CommentModel.created_at).label("created_at"),
             func.count().label("total_count"),
-            func.count(case((CommentModel.is_blocked == True, 1), else_=None)).label("blocked_count"),
-            func.count(case((CommentModel.is_blocked == False, 1), else_=None)).label("passed_count")
+            func.count(case((CommentModel.is_blocked == True, 1), else_=None)).label("blocked_count"),  # noqa E712
+            func.count(case((CommentModel.is_blocked == False, 1), else_=None)).label("passed_count")  # noqa E712
         ).where(
             CommentModel.created_at.between(filters.date_from, filters.date_to)
         ).group_by(
