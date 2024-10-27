@@ -1,14 +1,8 @@
-from enum import StrEnum
 from pathlib import Path
+from typing import Literal
 
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-class Envs(StrEnum):
-    PROD = "PROD"
-    DEV = "DEV"
-    TEST = "TEST"
 
 
 class Config(BaseSettings):
@@ -27,7 +21,7 @@ class Config(BaseSettings):
     def full_path(*relative) -> str:
         return str(Path("src", *relative).absolute())
 
-    MODE: Envs
+    MODE: Literal["PROD", "DEV", "TEST"]
     LOG_LEVEL: str
     LOG_FILE: str
 
