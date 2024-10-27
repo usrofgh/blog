@@ -8,7 +8,7 @@ from src.misc import retry_on_failure
 
 class OpenAIManager:
     def __init__(self):
-        self._openai_manager = OpenAI(api_key=config.OPENAI_KEY)
+        self._openai_manager = OpenAI(api_key=config.OPENAI_KEY.get_secret_value())
 
     @retry_on_failure()
     def detect_swear_words(self, text: str) -> list:

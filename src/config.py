@@ -45,7 +45,7 @@ class Config(BaseSettings):
     REDIS_HOST: str
     REDIS_URI: str
 
-    OPENAI_KEY: str
+    OPENAI_KEY: SecretStr
     OPENAI_MODEL: str
     OPENAI_SWEAR_CHECKER_PROMPT: str
     OPENAI_REPLY_GEN_PROMPT: str
