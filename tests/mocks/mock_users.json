@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "email": "admin@blog.com",
+    "password": "$2b$12$2DHEzSnEW.oSDSinUq3GuOYQoaLoSUkXMx6nVaZDvRljE/5tGQjvG",
+    "auto_reply": true,
+    "auto_reply_sec_delay": 5,
+    "is_activated": true,
+    "is_admin": true,
+    "activation_code": "1",
+    "registered_at": "2024-10-27T12:00:00Z"
+  },
+  {
+    "id": 2,
+    "email": "not_activated_user@blog.com",
+    "password": "$2b$12$2DHEzSnEW.oSDSinUq3GuOYQoaLoSUkXMx6nVaZDvRljE/5tGQjvG",
+    "auto_reply": false,
+    "auto_reply_sec_delay": 30,
+    "is_activated": false,
+    "is_admin": false,
+    "activation_code": "2",
+    "registered_at": "2024-10-27T12:00:00Z"
+  },
+    {
+    "id": 3,
+    "email": "user@blog.com",
+    "password": "$2b$12$2DHEzSnEW.oSDSinUq3GuOYQoaLoSUkXMx6nVaZDvRljE/5tGQjvG",
+    "auto_reply": false,
+    "auto_reply_sec_delay": 30,
+    "is_activated": true,
+    "is_admin": false,
+    "activation_code": "3",
+    "registered_at": "2023-01-04T12:00:00Z"
+  }
+]

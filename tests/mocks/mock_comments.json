@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "content": "Do you guys have any suggestions?",
+    "parent_comment_id": null,
+    "post_id": 1,
+    "author_id": 1,
+    "is_blocked": false,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 2,
+    "content": "Hi man. What's your wishes?",
+    "parent_comment_id": null,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": false,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 3,
+    "content": "I have PC. But I don't know how much you're ready to pay. We can discuss it in Discord",
+    "parent_comment_id": null,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": false,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 4,
+    "content": "I'd like to by PC approximately for 1120$. I need Ryzen 9 for ultra-graphic in games",
+    "parent_comment_id": 3,
+    "post_id": 1,
+    "author_id": 1,
+    "is_blocked": false,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 5,
+    "content": "Lol. That's bullshit. You do not need so powerful processor, you can just to take Ryzen7. It's enough",
+    "parent_comment_id": 4,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": true,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 6,
+    "content": "man are you here? You don't answer me. I really need some PC as soon as possible",
+    "parent_comment_id": 3,
+    "post_id": 1,
+    "author_id": 1,
+    "is_blocked": false,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 7,
+    "content": "I've answered you. You don't see? This stupid platform lags again...",
+    "parent_comment_id": 6,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": true,
+    "created_at": "2024-10-01T15:00:00Z",
+    "updated_at": "2024-10-01T15:00:00Z"
+  },
+  {
+    "id": 8,
+    "content": "Dude, please answer me",
+    "parent_comment_id": 3,
+    "post_id": 1,
+    "author_id": 1,
+    "is_blocked": false,
+    "created_at": "2024-10-03T15:00:00Z",
+    "updated_at": "2024-10-03T15:00:00Z"
+  },
+  {
+    "id": 9,
+    "content": "Guy, I really don't have a clue what's going on. My messages are deleted. Let's continue speaking in Discord",
+    "parent_comment_id": 7,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": false,
+    "created_at": "2024-10-03T15:00:00Z",
+    "updated_at": "2024-10-03T15:00:00Z"
+  },
+  {
+    "id": 10,
+    "content": "Ok! My nick: fjwelfjwelfjwle$%%$#%34534534543jfldsjflwsejfle$@%@%$@#%$#%$#%#$jfslejfwelfjelqwfj",
+    "parent_comment_id": 8,
+    "post_id": 1,
+    "author_id": 3,
+    "is_blocked": false,
+    "created_at": "2024-10-03T15:00:00Z",
+    "updated_at": "2024-10-03T15:00:00Z"
+  }
+]
