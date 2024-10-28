@@ -57,4 +57,5 @@ docker compose up
 
 
 # <a name="tests">💯 Tests</a>
-To run test is necessary to put .env.test in root of the project
+To run the tests, place the .env.test file in the root directory of the project
+PSQL creds must be valid and the server must be started (locally or via docker)
