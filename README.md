@@ -58,4 +58,9 @@ docker compose up
 
 # <a name="tests">💯 Tests</a>
 To run the tests, place the .env.test file in the root directory of the project
+
 PSQL creds must be valid and the server must be started (locally or via docker)
+Run tests (from root of the project):
+```bash
+  pytest
+```
