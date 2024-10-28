@@ -34,8 +34,8 @@ class UserModel(BaseModel):
         return self.email
 
 
+from src.back.models.auth_tokens import AuthTokenModel  # noqa E402
 from src.back.models.comments import CommentModel  # noqa E402
 # https://ru.stackoverflow.com/questions/1593274/sqlalchemy-relationship-с-моделями-в-отдельных-файлах
 # Fixing of the error - "sqlalchemy.exc.InvalidRequestError: When initializing mapper Mapper[UserModel(users)]
 from src.back.models.posts import PostModel  # noqa E402
-from src.back.models.auth_tokens import AuthTokenModel   # noqa E402
