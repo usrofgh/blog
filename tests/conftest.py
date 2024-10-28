@@ -72,16 +72,17 @@ async def ac():
         yield ac
 
 
-@pytest.fixture(scope="session")
-async def auth_token():
+@pytest.fixture(scope="function")
+async def auth_admin_ac():
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
-        response = await ac.post("/v1/auth/login", json={
+        response = await ac.post("/v1/api/auth/login", json={
             "email": "admin@blog.com",
             "password": "string"
-        }
-        )
-        token_data = response.json()
-        yield token_data
+        })
+
+        token = response.json()["access_token"]
+        ac.headers.update({"Authorization": f"Bearer {token}"})
+        yield ac
 
 
 @pytest.fixture(scope="function")

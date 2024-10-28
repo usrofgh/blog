@@ -6,12 +6,11 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.config import config as my_config
-from src.back.models.users import UserModel
-from src.back.models.posts import PostModel
-from src.back.models.comments import CommentModel
 from src.back.models.auth_tokens import AuthTokenModel
-
+from src.back.models.comments import CommentModel
+from src.back.models.posts import PostModel
+from src.back.models.users import UserModel
+from src.config import config as my_config
 
 PSQL_URI = my_config.PSQL_URI
 config = context.config

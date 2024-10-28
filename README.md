@@ -27,11 +27,12 @@
 
 [![⚙️ CI process](https://github.com/usrofgh/blog/actions/workflows/cicd.yml/badge.svg)](https://github.com/usrofgh/blog/actions/workflows/cicd.yml)
 [![GitHub release](https://img.shields.io/github/release/usrofgh/blog.svg)](https://GitHub.com/usrofgh/blog/releases/)
-
+![](https://img.shields.io/badge/Test%20counts-32-fefjl?logo=pytest)
  
 ## 📋 Table of Contents
 
 1. 🐳 [Docker](#docker)
+2. 💯 [Tests](#tests)
 
 
 
@@ -53,3 +54,7 @@ docker compose up
 ## CRM http://127.0.0.1:8081/admin
 
 ![Scenarios](https://i.ibb.co/QmVmxsY/Untitled.png)
+
+
+# <a name="tests">💯 Tests</a>
+To run test is necessary to put .env.test in root of the project

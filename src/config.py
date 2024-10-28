@@ -10,6 +10,7 @@ class Config(BaseSettings):
         env_file=(
             Path(__file__).parent.parent.joinpath(".env"),
             Path(__file__).parent.parent.joinpath(".env.dev"),
+            Path(__file__).parent.parent.joinpath(".env.test"),
         )
     )
 
