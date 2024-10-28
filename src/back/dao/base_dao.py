@@ -13,7 +13,7 @@ class BaseDAO(ABC):
 
     @classmethod
     async def _create(cls, db: AS, obj_in: SchemaType) -> ModelType:
-        db_obj = cls.MODEL(**obj_in.dict())
+        db_obj = cls.MODEL(**obj_in.model_dump())
         db.add(db_obj)
         await db.commit()
         await db.refresh(db_obj)
@@ -23,7 +23,6 @@ class BaseDAO(ABC):
     async def _read_by_id(cls, db: AS, id: int) -> ModelType:
         query = select(cls.MODEL).filter_by(id=id)
         result = await db.execute(query)
-        print(1)
         return result.scalars().first()
 
     @classmethod
