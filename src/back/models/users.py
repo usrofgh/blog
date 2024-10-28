@@ -24,6 +24,7 @@ class UserModel(BaseModel):
 
     posts: Mapped[list["PostModel"]] = relationship("PostModel", back_populates="author", cascade="all, delete-orphan")
     comments: Mapped[list["CommentModel"]] = relationship("CommentModel", back_populates="author", cascade="all, delete-orphan")
+    auth_token: Mapped["AuthTokenModel"] = relationship("AuthTokenModel", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("ix_users_email", "email"),
@@ -37,3 +38,4 @@ from src.back.models.comments import CommentModel  # noqa E402
 # https://ru.stackoverflow.com/questions/1593274/sqlalchemy-relationship-с-моделями-в-отдельных-файлах
 # Fixing of the error - "sqlalchemy.exc.InvalidRequestError: When initializing mapper Mapper[UserModel(users)]
 from src.back.models.posts import PostModel  # noqa E402
+from src.back.models.auth_tokens import AuthTokenModel   # noqa E402
