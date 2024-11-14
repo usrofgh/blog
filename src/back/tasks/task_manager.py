@@ -1,5 +1,6 @@
 import smtplib
 from email.message import EmailMessage
+from urllib.parse import urljoin
 
 from arq.connections import RedisSettings
 from tenacity import RetryError
@@ -62,7 +63,7 @@ async def send_activation_email(ctx: dict, to: str, activation_code: str) -> Non
         email["Subject"] = "Activation link"
         email["From"] = config.SMTP_USER
         email["To"] = to
-        link = f"http://{config.API_HOST}:{config.API_PORT}/v1/api/auth/activate-account/?activation_code={activation_code}"
+        link = urljoin(config.API_BASE_URL, f"/v1/auth/activate-account/{activation_code}")
         email.set_content(
             f"""
                 <div>

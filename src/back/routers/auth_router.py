@@ -23,7 +23,7 @@ async def login(user_data: UserLoginSchema, db: AS = Depends(get_db)):
     return await UserService.login(db=db, user_data=user_data)
 
 
-@auth_router.get("/activate-account", status_code=status.HTTP_200_OK)
+@auth_router.get("/activate-account/{activation_code}", status_code=status.HTTP_200_OK)
 @version(1)
 async def activate_account(
     activation_code: str,
