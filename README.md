@@ -49,7 +49,7 @@ docker compose up
 
 ## Swagger docs http://127.0.0.1:8081/v1/docs
 
-![Scenarios](https://i.ibb.co/wJ6LdLc/Untitled.png)
+![Scenarios](https://i.ibb.co/HYdnwSz/Untitled.png)
 
 ## CRM http://127.0.0.1:8081/admin
 
