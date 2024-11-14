@@ -8,12 +8,13 @@ from src.back.dao.comment_dao import CommentDAO
 from src.back.dao.post_dao import PostDAO
 from src.back.dao.user_dao import UserDAO
 from src.back.exceptions.base_exception import NetworkErrorException, SwearWordException
-from src.back.exceptions.comment_exceptions import CommentNotFoundException, CommentOlderThanOneDayError
+from src.back.exceptions.comment_exceptions import CommentNotFoundException, CommentOlderThanOneDayError, \
+    ParentCommentDoesNotExistException
 from src.back.exceptions.post_exceptions import PostNotFoundException
 from src.back.exceptions.user_exceptions import UserForbiddenException
 from src.back.models.comments import CommentModel
 from src.back.models.users import UserModel
-from src.back.schemas.analytic_schemas import AnalyticCommentFilterSchema
+from src.back.schemas.analytic_schemas import CommentFilterSchema
 from src.back.schemas.comment_schemas import CommentCreateDBSchema, CommentCreateSchema, CommentEditSchema
 from src.back.tasks.task_manager import REDIS_SETTINGS, auto_reply
 from src.managers.openai_manager import openai_manager
@@ -22,10 +23,15 @@ from src.managers.openai_manager import openai_manager
 class CommentService:
 
     @staticmethod
-    async def create_comment(db: AS, comment_data: CommentCreateSchema, curr_user: UserModel) -> CommentModel:
-        db_post = await PostDAO.read_post_by_id(db=db, id=comment_data.post_id)
+    async def create_comment(db: AS, post_id: int, comment_data: CommentCreateSchema, curr_user: UserModel) -> CommentModel:
+        db_post = await PostDAO.read_post_by_id(db=db, id=post_id)
         if not db_post or db_post.is_blocked:
             raise PostNotFoundException
+
+        if comment_data.parent_comment_id is not None:
+            db_parent_comm = await CommentDAO.read_comment_by_id(db=db, id=comment_data.parent_comment_id)
+            if not db_parent_comm:
+                raise ParentCommentDoesNotExistException()
 
         try:
             swear_words = openai_manager.detect_swear_words(comment_data.content)
@@ -33,7 +39,10 @@ class CommentService:
             raise NetworkErrorException
 
         comment_data = CommentCreateDBSchema(
-            **comment_data.model_dump(), author_id=curr_user.id, is_blocked=bool(swear_words)
+            **comment_data.model_dump(),
+            post_id=post_id,
+            author_id=curr_user.id,
+            is_blocked=bool(swear_words)
         )
         db_comment = await CommentDAO.create_comment(db=db, comment_data=comment_data)
 
@@ -70,14 +79,15 @@ class CommentService:
             raise CommentNotFoundException
         return db_comment
 
+
     @staticmethod
-    async def read_comments(db: AS, filters: AnalyticCommentFilterSchema) -> list[CommentModel]:
-        db_comments = await CommentDAO.read_comments(db=db, **filters.model_dump())
+    async def read_comments(db: AS, post_id: int) -> list[CommentModel]:
+        db_comments = await CommentDAO.read_comments(db=db, post_id=post_id)
         return db_comments
 
     @staticmethod
-    async def update_comment(db: AS, comment_data: CommentEditSchema, curr_user: UserModel) -> CommentModel:
-        db_comment: CommentModel = await CommentDAO.read_comment_by_id(db=db, id=comment_data.id)
+    async def update_comment(db: AS, comment_id: int, comment_data: CommentEditSchema, curr_user: UserModel) -> CommentModel:
+        db_comment: CommentModel = await CommentDAO.read_comment_by_id(db=db, id=comment_id)
         if not db_comment or db_comment.is_blocked:
             raise CommentNotFoundException
 

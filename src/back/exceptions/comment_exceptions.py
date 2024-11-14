@@ -11,3 +11,8 @@ class CommentNotFoundException(BException):
 class CommentOlderThanOneDayError(BException):
     STATUS_CODE = status.HTTP_400_BAD_REQUEST
     DETAIL = "Cannot modify. The comment is older than 1 day"
+
+
+class ParentCommentDoesNotExistException(BException):
+    STATUS_CODE = status.HTTP_404_NOT_FOUND
+    DETAIL = "Parent comment not found"

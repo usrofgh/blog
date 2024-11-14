@@ -4,6 +4,7 @@ import jwt
 from asyncpg.pgproto.pgproto import timedelta
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
+from jwt import DecodeError
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
@@ -66,8 +67,8 @@ class AuthService:
         return cls.PWD_CONTEXT.hash(password)
 
     @classmethod
-    async def authenticate_user(cls, db: AS, email: str, password: str) -> UserModel:
-        db_user = await UserDAO.read_user_by_email(db=db, email=email)
+    async def authenticate_user(cls, db: AS, username: str, password: str) -> UserModel:
+        db_user = await UserDAO.read_user_by_username(db=db, username=username)
         if db_user and cls.verify_password(password, db_user.password):
             return db_user
 
@@ -102,7 +103,7 @@ class AuthService:
             if payload["type"] != "refresh":
                 raise JWTIncorrectFormatException
 
-        except JWTError:
+        except (DecodeError, JWTError):
             raise JWTIncorrectFormatException
 
         exp = payload.get("exp")

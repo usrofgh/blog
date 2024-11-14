@@ -10,6 +10,7 @@ class AnalyticCommentSchema(BaseModel):
     passed_count: int
 
 
-class AnalyticCommentFilterSchema(BaseModel):
-    date_from: date = Field(default=date(2024, 1, 24))
-    date_to: date = Field(default=date(2024, 10, 25))
+
+class CommentFilterSchema(BaseModel):
+    date_from: date | None = Field(default=date(2024, 1, 24))
+    date_to: date | None = Field(default=date(2024, 10, 25))

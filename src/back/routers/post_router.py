@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status, Query
 from fastapi_versioning import version
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
@@ -9,13 +11,13 @@ from src.back.services.post_service import PostService
 from src.database import get_db
 
 post_router = APIRouter(
-    prefix="/api/posts",
-    tags=["Post"]
+    prefix="/posts",
+    tags=["Posts"]
 )
 
 
 @post_router.post(
-    path="/create",
+    path="",
     status_code=status.HTTP_201_CREATED,
     response_model=PostCreateResponseSchema
 )
@@ -29,35 +31,35 @@ async def create_post(
 
 
 @post_router.get(
-    path="/{id}",
+    path="/{post_id}",
     status_code=status.HTTP_200_OK,
     response_model=PostReadSchema,
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_post(id: int, db: AS = Depends(get_db)):
-    return await PostService.read_post_by_id(db=db, id=id)
+async def read_post(post_id: int, db: AS = Depends(get_db)):
+    return await PostService.read_post_by_id(db=db, id=post_id)
 
 
 @post_router.get(
-    path="/",
+    path="",
     status_code=status.HTTP_200_OK,
     response_model=list[PostReadSchema],
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_posts(filters: PostFilterSchema = Depends(), db: AS = Depends(get_db)):
+async def read_posts(filters: Annotated[PostFilterSchema, Query()], db: AS = Depends(get_db)):
     return await PostService.read_posts(db=db, filters=filters)
 
 
 @post_router.delete(
-    path="/{id}",
+    path="/{post_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 @version(1)
 async def delete_post(
-    id: int,
+    post_id: int,
     db: AS = Depends(get_db),
     db_user: UserModel = Depends(get_current_user)
 ):
-    await PostService.delete_post(db=db, id=id, curr_user=db_user)
+    await PostService.delete_post(db=db, id=post_id, curr_user=db_user)

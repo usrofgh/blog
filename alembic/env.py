@@ -9,7 +9,10 @@ from alembic import context
 from src.back.models.auth_tokens import AuthTokenModel
 from src.back.models.comments import CommentModel
 from src.back.models.posts import PostModel
+from src.back.models.connections import ConnectionModel
+from src.back.models.history.connection_history import ConnectionHistoryModel
 from src.back.models.users import UserModel
+from src.back.models.likes import LikeModel
 from src.config import config as my_config
 
 PSQL_URI = my_config.PSQL_URI

@@ -3,9 +3,14 @@ from fastapi import status
 from src.back.exceptions.base_exception import BException
 
 
-class UserExistException(BException):
+class UserEmailExistException(BException):
     STATUS_CODE = status.HTTP_409_CONFLICT
     DETAIL = "User with such email already exists"
+
+
+class UserNameExistException(BException):
+    STATUS_CODE = status.HTTP_409_CONFLICT
+    DETAIL = "User with such username already exists"
 
 
 class UserNotFoundException(BException):
@@ -26,3 +31,26 @@ class IncorrectActivationLink(BException):
 class UnactivatedException(BException):
     STATUS_CODE = status.HTTP_400_BAD_REQUEST
     DETAIL = "Activate the account"
+
+
+class PasswordMismatchException(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Passwords do not match"
+
+class PasswordNotProperException(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Password must contain at least: one uppercase letter, one special character, one digit"
+
+
+class UsernameSpecialSymbolsException(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Username can only contain alphanumeric characters and underscores"
+
+class InvalidEmailException(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Invalid Email"
+
+
+class BlockedAccountException(BException):
+    STATUS_CODE = status.HTTP_403_FORBIDDEN
+    DETAIL = "Account is blocked"

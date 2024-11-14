@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status, Query
 from fastapi_versioning import version
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
@@ -9,8 +11,8 @@ from src.back.services.user_service import UserService
 from src.database import get_db
 
 user_router = APIRouter(
-    prefix="/api/users",
-    tags=["User"]
+    prefix="/users",
+    tags=["Users"]
 )
 
 
@@ -68,31 +70,31 @@ async def create_user(user_data: UserCreateSchema, db: AS = Depends(get_db)):
 
 
 @user_router.get(
-    path="/{id}",
+    path="/{user_id}",
     status_code=status.HTTP_200_OK,
     response_model=UserReadSchema,
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_user(id: int, db: AS = Depends(get_db)):
-    return await UserService.read_user_by_id(db=db, id=id)
+async def read_user(user_id: int, db: AS = Depends(get_db)):
+    return await UserService.read_user_by_id(db=db, id=user_id)
 
 
 @user_router.get(
-    path="/",
+    path="",
     status_code=status.HTTP_200_OK,
     response_model=list[UserReadSchema],
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_users(filters: UserFilterSchema = Depends(), db: AS = Depends(get_db)):
+async def read_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Depends(get_db)):
     return await UserService.read_users(db=db, filters=filters)
 
 
 @user_router.delete(
-    path="/{id}",
+    path="/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
 @version(1)
-async def delete_user(id: int, db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
-    await UserService.delete_user(db=db, id=id, curr_user=curr_user)
+async def delete_user(user_id: int, db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
+    await UserService.delete_user(db=db, id=user_id, curr_user=curr_user)

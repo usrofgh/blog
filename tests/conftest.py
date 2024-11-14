@@ -76,7 +76,7 @@ async def ac():
 async def auth_admin_ac():
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         response = await ac.post("/v1/api/auth/login", json={
-            "email": "admin@blog.com",
+            "username": "admin",
             "password": "string"
         })
 

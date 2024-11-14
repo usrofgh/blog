@@ -28,6 +28,7 @@ class Config(BaseSettings):
 
     API_HOST: str
     API_PORT: int
+    API_BASE_URL: str
 
     JWT_ACCESS_KEY: SecretStr
     JWT_REFRESH_KEY: SecretStr

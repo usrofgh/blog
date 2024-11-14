@@ -10,19 +10,18 @@ from src.back.exceptions.auth_exceptions import IncorrectCredsException
 from src.back.exceptions.user_exceptions import (
     IncorrectActivationLink,
     UnactivatedException,
-    UserExistException,
+    UserEmailExistException,
     UserForbiddenException,
-    UserNotFoundException
+    UserNotFoundException, UserNameExistException
 )
-from src.back.models.users import UserModel
+from src.back.models.users import UserModel, UserStatus
 from src.back.schemas.auth_schemas import JWTLoginResponseSchema
 from src.back.schemas.user_schemas import (
     AutoReplyDelaySchema,
     UserCreateDBSchema,
     UserCreateSchema,
     UserFilterSchema,
-    UserLoginSchema,
-    UserUpdateSchema
+    UserLoginSchema
 )
 from src.back.services.auth_service import AuthService
 from src.back.tasks.task_manager import REDIS_SETTINGS, send_activation_email
@@ -31,12 +30,16 @@ from src.back.tasks.task_manager import REDIS_SETTINGS, send_activation_email
 class UserService:
     @staticmethod
     async def create_user(db: AS, user_data: UserCreateSchema) -> dict:
-        user_data.password = AuthService.get_password_hash(user_data.password)
+        db_user = await UserDAO.read_user_by_username(db=db, username=user_data.username)
+        if db_user:
+            raise UserNameExistException
         db_user = await UserDAO.read_user_by_email(db=db, email=user_data.email)
         if db_user:
-            raise UserExistException
+            raise UserEmailExistException
+
 
         activation_code = uuid.uuid4().hex
+        user_data.password = AuthService.get_password_hash(user_data.password)
         user_data = UserCreateDBSchema(**user_data.model_dump(), activation_code=activation_code)
         await UserDAO.create_user(db=db, user_data=user_data)
 
@@ -53,10 +56,10 @@ class UserService:
 
     @classmethod
     async def login(cls, db: AS, user_data: UserLoginSchema) -> JWTLoginResponseSchema:
-        db_user = await AuthService.authenticate_user(db=db, email=user_data.email, password=user_data.password)
+        db_user = await AuthService.authenticate_user(db=db, username=user_data.username, password=user_data.password)
         if not db_user:
             raise IncorrectCredsException
-        if db_user.is_activated is False:
+        if db_user.email_verified is False:
             raise UnactivatedException
 
         token_data = AuthService.generate_tokens(db_user.id)
@@ -66,34 +69,20 @@ class UserService:
     @staticmethod
     async def read_user_by_id(db: AS, id: int) -> UserModel:
         user = await UserDAO.read_user_by_id(db=db, id=id)
-        if not user:
-            raise UserNotFoundException
-        return user
-
-    @staticmethod
-    async def read_user_by_email(db: AS, email: str) -> UserModel:
-        user = await UserDAO.read_user_by_email(db=db, email=email)
-        if not user:
+        if not user or user.status is not user.status.ACTIVE:
             raise UserNotFoundException
         return user
 
     @staticmethod
     async def read_users(db: AS, filters: UserFilterSchema) -> list[UserModel]:
         filters = filters.model_dump(exclude_none=True)
-        users = await UserDAO.read_users(db=db, **filters)
+        users = await UserDAO.read_users(db=db, **filters, status=UserStatus.ACTIVE)
         return users
-
-    @staticmethod
-    async def update_user(db: AS, user: UserUpdateSchema) -> None:
-        db_user = await UserDAO.read_user_by_id(db=db, id=user.id)
-        if not db_user:
-            raise UserNotFoundException
-        await UserDAO.update_user(db=db, db_obj=db_user, obj_in=user)
 
     @staticmethod
     async def delete_user(db: AS, id: int, curr_user: UserModel) -> None:
         user = await UserDAO.read_user_by_id(db=db, id=id)
-        if not user:
+        if not user or user.status is user.status.DELETED:
             raise UserNotFoundException
 
         if id != curr_user.id and curr_user.is_admin is False:
@@ -123,7 +112,7 @@ class UserService:
         if not db_user:
             raise IncorrectActivationLink
 
-        db_user.is_activated = True
+        db_user.email_verified = True
         await db.commit()
 
     @staticmethod
@@ -137,5 +126,6 @@ class UserService:
         tokens = AuthService.generate_tokens(payload["sub"])
         await AuthService.save_token(db=db, user_id=payload["sub"], refresh_token=tokens.refresh_token)
         return tokens
+
 
     # TODO: Implement 'reset_password' method

@@ -2,9 +2,10 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
+from src.back.dao.auth_token_dao import AuthTokenDAO
 from src.back.dao.base_dao import BaseDAO
-from src.back.models.users import UserModel
-from src.back.schemas.user_schemas import UserCreateDBSchema, UserUpdateSchema
+from src.back.models.users import UserModel, UserStatus
+from src.back.schemas.user_schemas import UserCreateDBSchema
 
 
 class UserDAO(BaseDAO):
@@ -19,6 +20,10 @@ class UserDAO(BaseDAO):
         return await cls._read_by_id(db, id)
 
     @classmethod
+    async def read_user_by_username(cls, db: AS, username: str) -> MODEL:
+        return await cls._read_by(db, username=username)
+
+    @classmethod
     async def read_user_by_email(cls, db: AS, email: str) -> MODEL:
         return await cls._read_by(db, email=email)
 
@@ -31,9 +36,11 @@ class UserDAO(BaseDAO):
         return await cls._read_many(db, **filters)
 
     @classmethod
-    async def update_user(cls, db: AS, db_obj: MODEL, obj_in: UserUpdateSchema) -> MODEL:
-        return await cls._update(db, db_obj, obj_in)
-
-    @classmethod
     async def delete_user(cls, db: AS, db_obj: MODEL) -> None:
-        await cls._delete(db, db_obj)
+        delete_marker = "__deleted_8f6fd171c125a9506502440"
+        db_obj.email = db_obj.email + delete_marker
+        db_obj.username = db_obj.username + delete_marker
+        db_obj.status = UserStatus.DELETED
+        await db.commit()
+
+        await AuthTokenDAO.delete_token_by_user_id(db_obj.id, db)

@@ -17,7 +17,6 @@ class PostCreateResponseSchema(BaseModel):
     content: str = Field(min_length=1, max_length=1000)
     author_id: int
     created_at: datetime
-    updated_at: datetime
 
 
 class PostEditSchema(BaseModel):
@@ -26,10 +25,11 @@ class PostEditSchema(BaseModel):
 
 class PostFilterSchema(BaseModel):
     author_id: int | None = None
+    limit: int = 20
+    offset: int = 0
 
 
-class PostFilterDBSchema(BaseModel):
-    author_id: int | None = None
+class PostFilterDBSchema(PostFilterSchema):
     is_blocked: bool = False
 
 
@@ -39,4 +39,3 @@ class PostReadSchema(BaseModel):
     author_id: int
     # comments: list[int]
     created_at: datetime
-    updated_at: datetime

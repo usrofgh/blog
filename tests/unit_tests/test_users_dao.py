@@ -1,6 +1,7 @@
 import pytest
 
 from src.back.dao.user_dao import UserDAO
+from src.back.routers.user_router import user_router
 
 
 class TestUserDAO:
@@ -20,18 +21,18 @@ class TestUserDAO:
         assert bool(db_user) == is_found
 
     @pytest.mark.parametrize(
-        "email, is_found",
+        "username, is_found",
         [
-            ("admin@blog.com", True),
-            ("not_found@blog.com", False),
+            ("admin", True),
+            ("not_found", False),
         ],
         ids=[
-            "The user should be found by email",
-            "The user should not be found by email"
+            "The user should be found by username",
+            "The user should not be found by username"
         ]
     )
-    async def test_get_user_by_email(self, email: str, is_found: bool, db_session):
-        db_user = await UserDAO.read_user_by_email(db=db_session, email=email)
+    async def test_get_user_by_username(self, username: str, is_found: bool, db_session):
+        db_user = await UserDAO.read_user_by_username(db=db_session, username=username)
         assert bool(db_user) == is_found
 
     @pytest.mark.parametrize(
@@ -53,12 +54,12 @@ class TestUserDAO:
         "filters, count_records",
         [
             ({"auto_reply": False}, 2),
-            ({"is_activated": False}, 1),
+            ({"email_verified": False}, 1),
             ({"auto_reply_sec_delay": 111111}, 0),
         ],
         ids=[
             "The users should be found by auto_reply column",
-            "The users should not be found by 'is_activated' column",
+            "The users should not be found by 'email_verified' column",
             "The users should not be found by 'auto_reply_sec_delay' column",
         ]
     )
@@ -90,7 +91,7 @@ class TestUserDAO:
     #     assert db_user.email == email
     #     assert AuthService.verify_password(db_user.password, password)
     #     assert db_user.activation_code == activation_code
-    #     assert db_user.is_activated is False
+    #     assert db_user.email_verified is False
     #     assert db_user.is_admin is False
     #     assert db_user.auto_reply is False
     #     assert db_user.auto_reply_sec_delay == 30

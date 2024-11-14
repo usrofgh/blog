@@ -19,3 +19,9 @@ class AuthTokenDAO(BaseDAO):
     @classmethod
     async def read_by_token(cls, token: str, db: AS) -> MODEL:
         return await cls._read_by(db=db, refresh_token=token)
+
+    @classmethod
+    async def delete_token_by_user_id(cls, user_id: int, db: AS) -> None:
+        db_token = await cls.read_by_user_id(user_id=user_id, db=db)
+        if db_token:
+            await cls._delete(db=db, db_obj=db_token)

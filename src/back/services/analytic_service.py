@@ -3,13 +3,13 @@ from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
 from src.back.models.comments import CommentModel
-from src.back.schemas.analytic_schemas import AnalyticCommentFilterSchema, AnalyticCommentSchema
+from src.back.schemas.analytic_schemas import CommentFilterSchema, AnalyticCommentSchema
 
 
 class AnalyticService:
 
     @staticmethod
-    async def analytic_comments(db: AS, filters: AnalyticCommentFilterSchema) -> list[AnalyticCommentSchema]:
+    async def analytic_comments(db: AS, filters: CommentFilterSchema) -> list[AnalyticCommentSchema]:
         stmt = select(
             func.date(CommentModel.created_at).label("created_at"),
             func.count().label("total_count"),
