@@ -9,7 +9,7 @@ from src.back.services.analytic_service import AnalyticService
 from src.database import get_db
 
 analytic_router = APIRouter(
-    prefix="/api/analytic",
+    prefix="/analytic",
     tags=["Analytic"]
 )
 

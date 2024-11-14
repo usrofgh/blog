@@ -9,8 +9,8 @@ from src.back.services.comment_service import CommentService
 from src.database import get_db
 
 comment_router = APIRouter(
-    prefix="/api/comments",
-    tags=["Comment"]
+    prefix="/posts/{post_id}/comments",
+    tags=["Comments"]
 )
 
 

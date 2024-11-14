@@ -8,7 +8,7 @@ from src.back.services.user_service import UserService
 from src.database import get_db
 
 auth_router = APIRouter(
-    prefix="/api/auth",
+    prefix="/auth",
     tags=["Auth"]
 )
 

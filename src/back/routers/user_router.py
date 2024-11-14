@@ -9,8 +9,8 @@ from src.back.services.user_service import UserService
 from src.database import get_db
 
 user_router = APIRouter(
-    prefix="/api/users",
-    tags=["User"]
+    prefix="/users",
+    tags=["Users"]
 )
 
 

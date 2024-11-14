@@ -9,8 +9,8 @@ from src.back.services.post_service import PostService
 from src.database import get_db
 
 post_router = APIRouter(
-    prefix="/api/posts",
-    tags=["Post"]
+    prefix="/posts",
+    tags=["Posts"]
 )
 
 
