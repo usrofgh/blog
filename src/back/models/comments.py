@@ -20,11 +20,8 @@ class CommentModel(BaseModel):
     is_blocked: Mapped[bool]
 
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime | None] = mapped_column(
-        server_default=func.now(), onupdate=func.now()
-    )
 
-    replies: Mapped["CommentModel"] = relationship("CommentModel", back_populates="parent_comment", cascade="all, delete-orphan")
+    replies: Mapped["CommentModel"] = relationship("CommentModel", back_populates="parent_comment")
     parent_comment: Mapped["CommentModel"] = relationship("CommentModel", remote_side=[id], back_populates="replies")
     author: Mapped["UserModel"] = relationship("UserModel", back_populates="comments")
     post: Mapped["PostModel"] = relationship("PostModel", back_populates="comments")

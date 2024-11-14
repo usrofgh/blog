@@ -16,7 +16,7 @@ class UserAdmin(ModelView, model=User):
 
     column_list = [
         User.id, User.email, User.auto_reply, User.auto_reply_sec_delay,
-        User.is_activated, User.is_admin, User.registered_at,
+        User.email_verified, User.is_admin, User.registered_at,
         User.posts, User.comments
     ]
     column_details_list = column_list
@@ -25,7 +25,7 @@ class UserAdmin(ModelView, model=User):
 
     form_columns = [
         User.email, User.password, User.auto_reply,
-        User.auto_reply_sec_delay, User.is_activated, User.is_admin
+        User.auto_reply_sec_delay, User.email_verified, User.is_admin
     ]
 
 
@@ -40,7 +40,7 @@ class PostAdmin(ModelView, model=Post):
 
     column_list = [
         Post.id, Post.content, Post.author, Post.is_blocked,
-        Post.created_at, Post.updated_at
+        Post.created_at
     ]
     column_details_list = column_list
 
@@ -59,7 +59,7 @@ class CommentAdmin(ModelView, model=Comment):
     column_list = [
         Comment.id, Comment.author, Comment.post,
         Comment.content, Comment.is_blocked, Comment.parent_comment_id,
-        Comment.created_at, Comment.updated_at
+        Comment.created_at
     ]
 
     column_details_list = column_list

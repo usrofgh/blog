@@ -15,9 +15,8 @@ class PostModel(BaseModel):
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     is_blocked: Mapped[bool]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
 
-    comments: Mapped[list["CommentModel"]] = relationship("CommentModel", back_populates="post", cascade="all, delete-orphan")
+    comments: Mapped[list["CommentModel"]] = relationship("CommentModel", back_populates="post")
     author: Mapped["UserModel"] = relationship("UserModel", back_populates="posts")
 
     def __repr__(self) -> str:

@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from src.back.schemas.analytic_schemas import AnalyticCommentFilterSchema
+from src.back.schemas.analytic_schemas import CommentFilterSchema
 from src.back.services.analytic_service import AnalyticService
 
 
@@ -27,7 +27,7 @@ class TestAnalytic:
         date_from = datetime.datetime.strptime(date_from, to_format)
         date_to = datetime.datetime.strptime(date_to, to_format)
 
-        schema = AnalyticCommentFilterSchema(date_from=date_from, date_to=date_to)
+        schema = CommentFilterSchema(date_from=date_from, date_to=date_to)
         response = await AnalyticService.analytic_comments(db=db_session, filters=schema)
         if not expected:
             assert response == []

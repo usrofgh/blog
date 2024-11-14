@@ -14,10 +14,10 @@ from src.database import SessionLocal
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
         form = await request.form()
-        email, password = form["username"], form["password"]
+        username, password = form["username"], form["password"]
 
         async with SessionLocal() as db:
-            user_data = UserLoginSchema(email=email, password=password)
+            user_data = UserLoginSchema(username=username, password=password)
             try:
                 token = await UserService.login(db=db, user_data=user_data)
             except IncorrectCredsException:

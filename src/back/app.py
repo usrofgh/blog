@@ -11,6 +11,8 @@ from src.back.admin_panel.views import CommentAdmin, PostAdmin, UserAdmin
 from src.back.routers.analytic_router import analytic_router
 from src.back.routers.auth_router import auth_router
 from src.back.routers.comment_router import comment_router
+from src.back.routers.connection_router import connection_router
+from src.back.routers.like_router import like_router
 from src.back.routers.post_router import post_router
 from src.back.routers.user_router import user_router
 from src.config import config
@@ -39,8 +41,10 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(analytic_router)
 app.include_router(user_router)
+app.include_router(connection_router)
 app.include_router(post_router)
 app.include_router(comment_router)
+app.include_router(like_router)
 
 app = VersionedFastAPI(
     app=app,

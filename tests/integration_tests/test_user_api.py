@@ -4,11 +4,11 @@ from fastapi import status
 
 class TestUserAPI:
     @pytest.mark.parametrize(
-        "email, password, status_code",
+        "username, password, status_code",
         [
-            ("admin@blog.com", "string", status.HTTP_200_OK),
-            ("not_activated_user@blog.com", "string", status.HTTP_400_BAD_REQUEST),
-            ("absent_email@blog.com", "string", status.HTTP_401_UNAUTHORIZED),
+            ("admin", "string", status.HTTP_200_OK),
+            ("not_activated_user", "string", status.HTTP_400_BAD_REQUEST),
+            ("absent_email", "string", status.HTTP_401_UNAUTHORIZED),
         ],
         ids=[
             "The user should login",
@@ -16,9 +16,9 @@ class TestUserAPI:
             "The absent user should not login"
         ]
     )
-    async def test_login_user(self, email: str, password: str, status_code: int, ac):
+    async def test_login_user(self, username: str, password: str, status_code: int, ac):
         data = {
-            "email": email,
+            "username": username,
             "password": password,
         }
         response = await ac.post("/v1/api/auth/login", json=data)
