@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession as AS
 
 from src.back.schemas.auth_schemas import JWTLoginResponseSchema, RefreshTokenSchema
 from src.back.schemas.user_schemas import UserLoginSchema
+from src.back.services.auth_service import AuthService
 from src.back.services.user_service import UserService
 from src.database import get_db
 
@@ -38,4 +39,4 @@ async def refresh_token(
     token: RefreshTokenSchema,
     db: AS = Depends(get_db)
 ):
-    return await UserService.refresh_token(refresh_token=token.refresh_token, db=db)
+    return await AuthService.refresh_token(refresh_token=token.refresh_token, db=db)

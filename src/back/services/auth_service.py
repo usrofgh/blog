@@ -10,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession as AS
 
 from src.back.dao.auth_token_dao import AuthTokenDAO
 from src.back.dao.user_dao import UserDAO
-from src.back.exceptions.auth_exceptions import JWTIncorrectFormatException, JWTokenExpiredException
+from src.back.exceptions.auth_exceptions import JWTIncorrectFormatException, JWTokenExpiredException, \
+    IncorrectCredsException
 from src.back.models.auth_tokens import AuthTokenModel
 from src.back.models.users import UserModel
 from src.back.schemas.auth_schemas import JWTLoginResponseSchema, RefreshTokenCreateSchema
@@ -123,3 +124,15 @@ class AuthService:
         token_schema = RefreshTokenCreateSchema(user_id=user_id, refresh_token=refresh_token)
         token = await AuthTokenDAO.create_token(db=db, obj_in=token_schema)
         return token
+
+    @classmethod
+    async def refresh_token(cls, refresh_token: str, db: AS) -> JWTLoginResponseSchema:
+        payload = AuthService.validate_refresh_token(refresh_token)
+        db_token = await AuthTokenDAO.read_by_token(refresh_token, db=db)
+
+        if not (payload and db_token):
+            raise IncorrectCredsException
+
+        tokens = AuthService.generate_tokens(payload["sub"])
+        await AuthService.save_token(db=db, user_id=payload["sub"], refresh_token=tokens.refresh_token)
+        return tokens
