@@ -13,6 +13,7 @@ from src.back.models.connections import ConnectionModel
 from src.back.models.history.connection_history import ConnectionHistoryModel
 from src.back.models.users import UserModel
 from src.back.models.likes import LikeModel
+from src.back.models.messages import MessageModel
 from src.config import config as my_config
 
 PSQL_URI = my_config.PSQL_URI
