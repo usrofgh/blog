@@ -1,10 +1,11 @@
 import uuid
+from datetime import datetime
+from pathlib import Path
 
 from arq import create_pool
-from fastapi import status
+from fastapi import status, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
-from src.back.dao.auth_token_dao import AuthTokenDAO
 from src.back.dao.user_dao import UserDAO
 from src.back.exceptions.auth_exceptions import IncorrectCredsException
 from src.back.exceptions.user_exceptions import (
@@ -12,7 +13,10 @@ from src.back.exceptions.user_exceptions import (
     UnactivatedException,
     UserEmailExistException,
     UserForbiddenException,
-    UserNotFoundException, UserNameExistException
+    UserNotFoundException,
+    UserNameExistException,
+    IncorrectAvatarException,
+    AvatarDoesNotExist
 )
 from src.back.models.users import UserModel, UserStatus
 from src.back.schemas.auth_schemas import JWTLoginResponseSchema
@@ -115,17 +119,42 @@ class UserService:
         db_user.email_verified = True
         await db.commit()
 
+    @classmethod
+    async def upload_avatar(cls, curr_user: UserModel, avatar: UploadFile, db: AS) -> None:
+        allowed_extensions = {"png", "jpg", "jpeg"}
+        file_extension = avatar.filename.split(".")[-1]
+        if file_extension not in allowed_extensions:
+            raise IncorrectAvatarException
+
+        path = Path(__file__).parent.parent.parent/"static"/"avatars"/f"{str(curr_user.id)}.{file_extension}"
+        if path.exists():
+            await cls.avatar_to_archive(curr_user=curr_user, db=db)
+
+        with path.open("wb") as file:
+            file.write(await avatar.read())
+
+        if not curr_user.avatar_url:
+            curr_user.avatar_url = f"/static/avatars/{str(curr_user.id)}.{file_extension}"
+        await db.commit()
+
     @staticmethod
-    async def refresh_token(refresh_token: str, db: AS) -> JWTLoginResponseSchema:
-        payload = AuthService.validate_refresh_token(refresh_token)
-        db_token = await AuthTokenDAO.read_by_token(refresh_token, db=db)
+    async def avatar_to_archive(curr_user: UserModel, db: AS) -> None:
+        if not curr_user.avatar_url:
+            raise AvatarDoesNotExist
 
-        if not (payload and db_token):
-            raise IncorrectCredsException
+        curr_photo_name = curr_user.avatar_url.split("/")[-1]
+        name, ext = curr_photo_name.split(".")
+        archived_at = str(datetime.now().timestamp()).replace(".", "")
+        archived_photo_name = f"{name}_{archived_at}.{ext}"
 
-        tokens = AuthService.generate_tokens(payload["sub"])
-        await AuthService.save_token(db=db, user_id=payload["sub"], refresh_token=tokens.refresh_token)
-        return tokens
+        base_path = Path(__file__).parent.parent.parent/"static"
+        curr_photo_path = base_path/"avatars"/curr_photo_name
+        archive_path = base_path/"archive"
+        archive_photo_path = base_path/"archive"/archived_photo_name
 
+        archive_path.mkdir(parents=True, exist_ok=True)
+        curr_photo_path.rename(archive_photo_path)
+        curr_user.avatar_url = None
+        await db.commit()
 
     # TODO: Implement 'reset_password' method

@@ -54,3 +54,13 @@ class InvalidEmailException(BException):
 class BlockedAccountException(BException):
     STATUS_CODE = status.HTTP_403_FORBIDDEN
     DETAIL = "Account is blocked"
+
+
+class IncorrectAvatarException(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Unsupported file type"
+
+
+class AvatarDoesNotExist(BException):
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
+    DETAIL = "Avatar does not exist"

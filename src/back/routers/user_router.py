@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status, Query, File, UploadFile
 from fastapi_versioning import version
 from sqlalchemy.ext.asyncio import AsyncSession as AS
 
 from src.back.dependencies import get_current_user
+from src.back.exceptions.user_exceptions import UserForbiddenException
 from src.back.models.users import UserModel
 from src.back.schemas.user_schemas import AutoReplyDelaySchema, UserCreateSchema, UserFilterSchema, UserReadSchema
 from src.back.services.user_service import UserService
@@ -98,3 +99,35 @@ async def read_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Dep
 @version(1)
 async def delete_user(user_id: int, db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
     await UserService.delete_user(db=db, id=user_id, curr_user=curr_user)
+
+
+@user_router.post(
+    path="/{user_id}/avatar",
+    status_code=status.HTTP_200_OK
+)
+@version(1)
+async def upload_avatar(
+        user_id: int,
+        avatar: UploadFile = File(...),
+        curr_user: UserModel = Depends(get_current_user),
+        db: AS = Depends(get_db)
+):
+    if curr_user.id != user_id:
+        raise UserForbiddenException
+
+    await UserService.upload_avatar(curr_user=curr_user, avatar=avatar, db=db)
+
+@user_router.delete(
+    path="/{user_id}/avatar",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@version(1)
+async def delete_avatar(
+        user_id: int,
+        curr_user: UserModel = Depends(get_current_user),
+        db: AS = Depends(get_db)
+):
+    if curr_user.id != user_id:
+        raise UserForbiddenException
+
+    await UserService.avatar_to_archive(curr_user=curr_user, db=db)

@@ -29,6 +29,7 @@ class UserModel(BaseModel):
     is_admin: Mapped[bool] = mapped_column(default=False)
     activation_code: Mapped[str | None] = mapped_column(unique=True)
     registered_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    avatar_url: Mapped[str | None]
 
     posts: Mapped[list["PostModel"]] = relationship("PostModel", back_populates="author")
     comments: Mapped[list["CommentModel"]] = relationship("CommentModel", back_populates="author")
