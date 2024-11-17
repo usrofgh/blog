@@ -39,7 +39,7 @@ async def create_comment(
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
 @version(1)
-async def read_comments(post_id: int, db: AS = Depends(get_db)):
+async def get_comments(post_id: int, db: AS = Depends(get_db)):
     return await CommentService.read_comments(db=db, post_id=post_id)
 
 @comment_router.get(
@@ -49,7 +49,7 @@ async def read_comments(post_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
 @version(1)
-async def read_comment(comment_id: Annotated[int, Path(gt=0)], db: AS = Depends(get_db)):
+async def get_comment(comment_id: Annotated[int, Path(gt=0)], db: AS = Depends(get_db)):
     return await CommentService.read_comment_by_id(db=db, id=comment_id)
 
 

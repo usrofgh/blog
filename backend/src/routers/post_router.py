@@ -37,7 +37,7 @@ async def create_post(
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_post(post_id: int, db: AS = Depends(get_db)):
+async def get_post(post_id: int, db: AS = Depends(get_db)):
     return await PostService.read_post_by_id(db=db, id=post_id)
 
 
@@ -48,7 +48,7 @@ async def read_post(post_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_posts(filters: Annotated[PostFilterSchema, Query()], db: AS = Depends(get_db)):
+async def get_posts(filters: Annotated[PostFilterSchema, Query()], db: AS = Depends(get_db)):
     return await PostService.read_posts(db=db, filters=filters)
 
 

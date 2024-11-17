@@ -77,7 +77,7 @@ async def create_user(user_data: UserCreateSchema, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_user(user_id: int, db: AS = Depends(get_db)):
+async def get_user(user_id: int, db: AS = Depends(get_db)):
     return await UserService.read_user_by_id(db=db, id=user_id)
 
 
@@ -88,7 +88,7 @@ async def read_user(user_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def read_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Depends(get_db)):
+async def get_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Depends(get_db)):
     return await UserService.read_users(db=db, filters=filters)
 
 

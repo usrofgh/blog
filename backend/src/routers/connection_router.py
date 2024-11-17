@@ -23,7 +23,7 @@ connection_router = APIRouter(
     status_code=status_codes.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_user_by_id)]
 )
-async def read_followers(
+async def get_followers(
         user_id: int,
         db: AS = Depends(get_db)
 ):
@@ -35,7 +35,7 @@ async def read_followers(
     status_code=status_codes.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_user_by_id)]
 )
-async def read_following(
+async def get_following(
         user_id: int,
         db: AS = Depends(get_db)
 ):

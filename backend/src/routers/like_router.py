@@ -42,7 +42,7 @@ async def post_reaction(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
-async def read_post_reactions(db: AS = Depends(get_db)):
+async def get_post_reactions(db: AS = Depends(get_db)):
     return await LikeService.read_reactions(db=db, resource_type=ResourceType.POST)
 
 
@@ -72,5 +72,5 @@ async def comment_reaction(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_curr_comment)]
 )
-async def read_comment_reactions(db: AS = Depends(get_db)):
+async def get_comment_reactions(db: AS = Depends(get_db)):
     return await LikeService.read_reactions(db=db, resource_type=ResourceType.COMMENT)
