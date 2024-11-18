@@ -1,15 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Query, File, UploadFile
+from fastapi import APIRouter, status, Query, File, UploadFile, Depends
 from fastapi_versioning import version
-from sqlalchemy.ext.asyncio import AsyncSession as AS
 
-from back.dependencies import get_current_user
-from back.exceptions.user_exceptions import UserForbiddenException
-from back.models.users import UserModel
-from back.schemas.user_schemas import AutoReplyDelaySchema, UserCreateSchema, UserFilterSchema, UserReadSchema
-from back.services.user_service import UserService
-from database import get_db
+from dependencies import SessionObj, UserServiceObj, CurrUserObj, get_current_user
+from exceptions.user_exceptions import UserForbiddenException
+from schemas.user_schemas import AutoReplyDelaySchema, UserCreateSchema, UserFilterSchema, UserReadSchema
 
 user_router = APIRouter(
     prefix="/users",
@@ -24,7 +20,7 @@ user_router = APIRouter(
     response_model=UserReadSchema
 )
 @version(1)
-async def get_me(curr_user: UserModel = Depends(get_current_user)):
+async def get_me(curr_user: CurrUserObj):
     return curr_user
 
 
@@ -33,8 +29,12 @@ async def get_me(curr_user: UserModel = Depends(get_current_user)):
     status_code=status.HTTP_200_OK
 )
 @version(1)
-async def enable_auto_reply(db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
-    await UserService.enable_auto_reply(db=db, curr_user=curr_user)
+async def enable_auto_reply(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        curr_user: CurrUserObj
+):
+    await user_service.enable_auto_reply(db=db, curr_user=curr_user)
 
 
 @user_router.get(
@@ -42,8 +42,12 @@ async def enable_auto_reply(db: AS = Depends(get_db), curr_user: UserModel = Dep
     status_code=status.HTTP_200_OK
 )
 @version(1)
-async def disable_auto_reply(db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
-    await UserService.disable_auto_reply(db=db, curr_user=curr_user)
+async def disable_auto_reply(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        curr_user: CurrUserObj
+):
+    await user_service.disable_auto_reply(db=db, curr_user=curr_user)
 
 
 @user_router.post(
@@ -52,11 +56,12 @@ async def disable_auto_reply(db: AS = Depends(get_db), curr_user: UserModel = De
 )
 @version(1)
 async def setup_reply_delay(
-    delay: AutoReplyDelaySchema,
-    db: AS = Depends(get_db),
-    curr_user: UserModel = Depends(get_current_user)
+        db: SessionObj,
+        user_service: UserServiceObj,
+        delay: AutoReplyDelaySchema,
+        curr_user: CurrUserObj
 ):
-    await UserService.setup_delay(db=db, curr_user=curr_user, delay=delay)
+    await user_service.setup_delay(db=db, curr_user=curr_user, delay=delay)
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -66,8 +71,12 @@ async def setup_reply_delay(
     status_code=status.HTTP_201_CREATED,
 )
 @version(1)
-async def create_user(user_data: UserCreateSchema, db: AS = Depends(get_db)):
-    return await UserService.create_user(db=db, user_data=user_data)
+async def register_user(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        user_data: UserCreateSchema
+):
+    return await user_service.create_user(db=db, user_data=user_data)
 
 
 @user_router.get(
@@ -77,8 +86,12 @@ async def create_user(user_data: UserCreateSchema, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def get_user(user_id: int, db: AS = Depends(get_db)):
-    return await UserService.read_user_by_id(db=db, id=user_id)
+async def get_user(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        user_id: int
+):
+    return await user_service.get_user(db=db, id=user_id)
 
 
 @user_router.get(
@@ -88,8 +101,12 @@ async def get_user(user_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def get_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Depends(get_db)):
-    return await UserService.read_users(db=db, filters=filters)
+async def get_users(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        filters: Annotated[UserFilterSchema, Query()]
+):
+    return await user_service.get_users(db=db, filters=filters)
 
 
 @user_router.delete(
@@ -97,8 +114,13 @@ async def get_users(filters: Annotated[UserFilterSchema, Query()], db: AS = Depe
     status_code=status.HTTP_204_NO_CONTENT
 )
 @version(1)
-async def delete_user(user_id: int, db: AS = Depends(get_db), curr_user: UserModel = Depends(get_current_user)):
-    await UserService.delete_user(db=db, id=user_id, curr_user=curr_user)
+async def delete_user(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        curr_user: CurrUserObj,
+        user_id: int,
+):
+    await user_service.soft_delete_user(db=db, id=user_id, curr_user=curr_user)
 
 
 @user_router.post(
@@ -107,15 +129,17 @@ async def delete_user(user_id: int, db: AS = Depends(get_db), curr_user: UserMod
 )
 @version(1)
 async def upload_avatar(
+        db: SessionObj,
+        user_service: UserServiceObj,
+        curr_user: CurrUserObj,
         user_id: int,
         avatar: UploadFile = File(...),
-        curr_user: UserModel = Depends(get_current_user),
-        db: AS = Depends(get_db)
 ):
     if curr_user.id != user_id:
         raise UserForbiddenException
 
-    await UserService.upload_avatar(curr_user=curr_user, avatar=avatar, db=db)
+    await user_service.upload_avatar(db=db, curr_user=curr_user, avatar=avatar)
+
 
 @user_router.delete(
     path="/{user_id}/avatar",
@@ -123,11 +147,12 @@ async def upload_avatar(
 )
 @version(1)
 async def delete_avatar(
+        db: SessionObj,
+        user_service: UserServiceObj,
         user_id: int,
-        curr_user: UserModel = Depends(get_current_user),
-        db: AS = Depends(get_db)
+        curr_user: CurrUserObj,
 ):
     if curr_user.id != user_id:
         raise UserForbiddenException
 
-    await UserService.avatar_to_archive(curr_user=curr_user, db=db)
+    await user_service.avatar_to_archive(db=db, curr_user=curr_user)

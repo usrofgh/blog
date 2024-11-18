@@ -16,7 +16,7 @@ class TestUserDAO:
         ]
     )
     async def test_get_user_by_id(self, user_id: int, is_found: bool, db_session):
-        db_user = await UserDAO.read_user_by_id(db=db_session, id=user_id)
+        db_user = await UserDAO.get_user(db=db_session, id=user_id)
         assert bool(db_user) == is_found
 
     @pytest.mark.parametrize(
@@ -63,7 +63,7 @@ class TestUserDAO:
         ]
     )
     async def test_get_users_by_filters(self, filters: dict, count_records: int, db_session):
-        db_users = await UserDAO.read_users(db=db_session, **filters)
+        db_users = await UserDAO.get_users(db=db_session, **filters)
         assert len(db_users) == count_records
 
     # @pytest.mark.parametrize(
@@ -110,11 +110,11 @@ class TestUserDAO:
         ]
     )
     async def test_delete_user(self, id: int, is_deleted: bool, db_session):
-        db_user = await UserDAO.read_user_by_id(db=db_session, id=id)
+        db_user = await UserDAO.get_user(db=db_session, id=id)
         assert bool(db_user) is is_deleted
 
         if db_user:
             await UserDAO.delete_user(db=db_session, db_obj=db_user)
 
-        db_user = await UserDAO.read_user_by_id(db=db_session, id=id)
+        db_user = await UserDAO.get_user(db=db_session, id=id)
         assert db_user is None

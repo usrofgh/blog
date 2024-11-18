@@ -3,7 +3,7 @@ import datetime
 import pytest
 
 from backend.src.back import CommentFilterSchema
-from backend.src.back.services.analytic_service import AnalyticService
+from services.analytic_service import AnalyticService
 
 
 class TestAnalytic:

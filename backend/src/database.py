@@ -1,4 +1,5 @@
 from sqlalchemy import NullPool
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -21,6 +22,7 @@ async def get_db():
     db = SessionLocal()
     try:
         yield db
-    finally:
+    except IntegrityError:
         await db.rollback()
+    finally:
         await db.close()

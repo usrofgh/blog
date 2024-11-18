@@ -7,10 +7,10 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert
 
-from backend.src.back.app import app as fastapi_app
-from backend.src.back.models.comments import CommentModel
-from backend.src.back.models.posts import PostModel
-from backend.src.back.models import UserModel
+from app import app as fastapi_app
+from models.comments import CommentModel
+from models.posts import PostModel
+from models.users import UserModel
 from backend.src.config import config
 from backend.src.database import BaseModel, SessionLocal, engine
 

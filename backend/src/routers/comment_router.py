@@ -2,13 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, Path
 from fastapi_versioning import version
-from sqlalchemy.ext.asyncio import AsyncSession as AS
 
-from back.dependencies import get_current_user, get_curr_post
-from back.models.users import UserModel
-from back.schemas.comment_schemas import CommentCreateSchema, CommentEditSchema, CommentReadSchema
-from back.services.comment_service import CommentService
-from database import get_db
+from dependencies import get_current_user, get_curr_post, SessionObj, CurrUserObj, CommentServiceObj
+from schemas.comment_schemas import CommentCreateSchema, CommentEditSchema, CommentReadSchema
 
 comment_router = APIRouter(
     prefix="/posts/{post_id}/comments",
@@ -24,12 +20,13 @@ comment_router = APIRouter(
 )
 @version(1)
 async def create_comment(
+    db: SessionObj,
+    db_user: CurrUserObj,
+    comment_service: CommentServiceObj,
     post_id: int,
     comment_data: CommentCreateSchema,
-    db: AS = Depends(get_db),
-    db_user: UserModel = Depends(get_current_user)
 ):
-    return await CommentService.create_comment(db=db, comment_data=comment_data, curr_user=db_user, post_id=post_id)
+    return await comment_service.create_comment(db=db, comment_data=comment_data, curr_user=db_user, post_id=post_id)
 
 
 @comment_router.get(
@@ -39,8 +36,12 @@ async def create_comment(
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
 @version(1)
-async def get_comments(post_id: int, db: AS = Depends(get_db)):
-    return await CommentService.read_comments(db=db, post_id=post_id)
+async def get_comments(
+        db: SessionObj,
+        comment_service: CommentServiceObj,
+        post_id: int,
+):
+    return await comment_service.get_comments(db=db, post_id=post_id)
 
 @comment_router.get(
     path="/{comment_id}",
@@ -49,24 +50,28 @@ async def get_comments(post_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
 @version(1)
-async def get_comment(comment_id: Annotated[int, Path(gt=0)], db: AS = Depends(get_db)):
-    return await CommentService.read_comment_by_id(db=db, id=comment_id)
+async def get_comment(
+        db: SessionObj,
+        comment_service: CommentServiceObj,
+        comment_id: Annotated[int, Path(gt=0)]
+):
+    return await comment_service.read_comment_by_id(db=db, id=comment_id)
 
 
 @comment_router.patch(
     path="/{comment_id}",
     status_code=status.HTTP_200_OK,
-    response_model=CommentReadSchema,
-    dependencies=[Depends(get_curr_post)]
+    response_model=CommentReadSchema
 )
 @version(1)
 async def update_comment(
+    db: SessionObj,
+    db_user: CurrUserObj,
+    comment_service: CommentServiceObj,
     comment_id: int,
     comment_data: CommentEditSchema,
-    db: AS = Depends(get_db),
-    curr_user: UserModel = Depends(get_current_user)
 ):
-    return await CommentService.update_comment(db=db, comment_id=comment_id, comment_data=comment_data, curr_user=curr_user)
+    return await comment_service.update_comment(db=db, comment_id=comment_id, comment_data=comment_data, curr_user=db_user)
 
 
 @comment_router.delete(
@@ -76,8 +81,9 @@ async def update_comment(
 )
 @version(1)
 async def delete_comment(
+    db: SessionObj,
+    db_user: CurrUserObj,
+    comment_service: CommentServiceObj,
     comment_id: int,
-    db: AS = Depends(get_db),
-    db_user: UserModel = Depends(get_current_user)
 ):
-    await CommentService.delete_comment(db=db, id=comment_id, curr_user=db_user)
+    await comment_service.soft_delete(db=db, id=comment_id, curr_user=db_user)

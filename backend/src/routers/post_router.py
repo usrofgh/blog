@@ -2,13 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, Query
 from fastapi_versioning import version
-from sqlalchemy.ext.asyncio import AsyncSession as AS
 
-from back.dependencies import get_current_user
-from back.models.users import UserModel
-from back.schemas.post_schemas import PostCreateResponseSchema, PostCreateSchema, PostFilterSchema, PostReadSchema
-from back.services.post_service import PostService
-from database import get_db
+from dependencies import get_current_user, SessionObj, CurrUserObj, PostServiceObj
+from schemas.post_schemas import PostCreateResponseSchema, PostCreateSchema, PostFilterSchema, PostReadSchema
 
 post_router = APIRouter(
     prefix="/posts",
@@ -23,11 +19,12 @@ post_router = APIRouter(
 )
 @version(1)
 async def create_post(
+    db: SessionObj,
+    db_user: CurrUserObj,
+    post_service: PostServiceObj,
     post_data: PostCreateSchema,
-    db: AS = Depends(get_db),
-    db_user: UserModel = Depends(get_current_user)
 ):
-    return await PostService.create_post(db=db, post_data=post_data, curr_user=db_user)
+    return await post_service.create_post(db=db, post_data=post_data, curr_user=db_user)
 
 
 @post_router.get(
@@ -37,8 +34,12 @@ async def create_post(
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def get_post(post_id: int, db: AS = Depends(get_db)):
-    return await PostService.read_post_by_id(db=db, id=post_id)
+async def get_post(
+        db: SessionObj,
+        post_service: PostServiceObj,
+        post_id: int
+):
+    return await post_service.get_post_by_id(db=db, id=post_id)
 
 
 @post_router.get(
@@ -48,8 +49,12 @@ async def get_post(post_id: int, db: AS = Depends(get_db)):
     dependencies=[Depends(get_current_user)]
 )
 @version(1)
-async def get_posts(filters: Annotated[PostFilterSchema, Query()], db: AS = Depends(get_db)):
-    return await PostService.read_posts(db=db, filters=filters)
+async def get_posts(
+        db: SessionObj,
+        post_service: PostServiceObj,
+        filters: Annotated[PostFilterSchema, Query()]
+):
+    return await post_service.get_posts(db=db, filters=filters)
 
 
 @post_router.delete(
@@ -58,8 +63,9 @@ async def get_posts(filters: Annotated[PostFilterSchema, Query()], db: AS = Depe
 )
 @version(1)
 async def delete_post(
+    db: SessionObj,
+    db_user: CurrUserObj,
+    post_service: PostServiceObj,
     post_id: int,
-    db: AS = Depends(get_db),
-    db_user: UserModel = Depends(get_current_user)
 ):
-    await PostService.delete_post(db=db, id=post_id, curr_user=db_user)
+    await post_service.soft_delete(db=db, id=post_id, curr_user=db_user)

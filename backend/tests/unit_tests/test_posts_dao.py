@@ -1,6 +1,6 @@
 import pytest
 
-from backend.src.back.dao.post_dao import PostDAO
+from repositories.post_repository import PostRepository
 
 
 class TestPostDAO:
@@ -16,7 +16,7 @@ class TestPostDAO:
         ]
     )
     async def test_get_post_by_id(self, id: int, is_found: bool, db_session):
-        db_post = await PostDAO.read_post_by_id(db=db_session, id=id)
+        db_post = await PostRepository.find_one(db=db_session, id=id)
         assert bool(db_post) == is_found
 
     @pytest.mark.parametrize(
@@ -46,7 +46,7 @@ class TestPostDAO:
         ]
     )
     async def test_get_post_by_filters(self, filters: dict, count_posts: int, db_session):
-        db_posts = await PostDAO.read_posts(db=db_session, **filters)
+        db_posts = await PostRepository.find_all(db=db_session, **filters)
         assert len(db_posts) == count_posts
 
     # @pytest.mark.parametrize(
@@ -90,11 +90,11 @@ class TestPostDAO:
         ]
     )
     async def test_delete_post(self, id: int, is_deleted: bool, db_session):
-        db_user = await PostDAO.read_post_by_id(db=db_session, id=id)
+        db_user = await PostRepository.find_one(db=db_session, id=id)
         assert bool(db_user) is is_deleted
 
         if db_user:
-            await PostDAO.delete_post(db=db_session, db_obj=db_user)
+            await PostRepository.delete(db=db_session, db_obj=db_user)
 
-        db_user = await PostDAO.read_post_by_id(db=db_session, id=id)
+        db_user = await PostRepository.find_one(db=db_session, id=id)
         assert db_user is None

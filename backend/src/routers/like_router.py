@@ -1,14 +1,9 @@
 from fastapi import APIRouter, status
 from fastapi.params import Depends
 
-from back.dependencies import get_current_user, get_curr_post, get_curr_comment
-from back.models.likes import ResourceType
-from back.models.users import UserModel
-from back.schemas.like_schemas import LikeReadSchema, LikeBaseSchema
-from back.services.like_service import LikeService
-from sqlalchemy.ext.asyncio import AsyncSession as AS
-
-from database import get_db
+from dependencies import get_current_user, get_curr_post, get_curr_comment, SessionObj, CurrUserObj, LikeServiceObj
+from models.likes import ResourceType
+from schemas.like_schemas import LikeReadSchema, LikeBaseSchema
 
 like_router = APIRouter(
     prefix="",
@@ -23,12 +18,13 @@ like_router = APIRouter(
     dependencies=[Depends(get_curr_post)]
 )
 async def post_reaction(
+        db: SessionObj,
+        curr_user: CurrUserObj,
+        like_service: LikeServiceObj,
         post_id: int,
         like_schema: LikeBaseSchema,
-        db: AS = Depends(get_db),
-        curr_user: UserModel = Depends(get_current_user)
 ):
-    return await LikeService.create_reaction(
+    return await like_service.create_reaction(
         db=db,
         resource_type=ResourceType.POST,
         resource_id=post_id,
@@ -42,8 +38,8 @@ async def post_reaction(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_curr_post)]
 )
-async def get_post_reactions(db: AS = Depends(get_db)):
-    return await LikeService.read_reactions(db=db, resource_type=ResourceType.POST)
+async def get_post_reactions(db: SessionObj, like_service: LikeServiceObj):
+    return await like_service.get_reactions(db=db, resource_type=ResourceType.POST)
 
 
 @like_router.post(
@@ -53,12 +49,13 @@ async def get_post_reactions(db: AS = Depends(get_db)):
     dependencies=[Depends(get_curr_comment)]
 )
 async def comment_reaction(
+        db: SessionObj,
+        curr_user: CurrUserObj,
+        like_service: LikeServiceObj,
         comment_id: int,
         like_schema: LikeBaseSchema,
-        db: AS = Depends(get_db),
-        curr_user: UserModel = Depends(get_current_user)
 ):
-    return await LikeService.create_reaction(
+    return await like_service.create_reaction(
         db=db,
         resource_type=ResourceType.COMMENT,
         resource_id=comment_id,
@@ -72,5 +69,5 @@ async def comment_reaction(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_current_user), Depends(get_curr_comment)]
 )
-async def get_comment_reactions(db: AS = Depends(get_db)):
-    return await LikeService.read_reactions(db=db, resource_type=ResourceType.COMMENT)
+async def get_comment_reactions(db: SessionObj, like_service: LikeServiceObj):
+    return await like_service.get_reactions(db=db, resource_type=ResourceType.COMMENT)
